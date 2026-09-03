@@ -1,0 +1,1 @@
+Line 121 h6 tag {{ $pod->product->name }} <br> @if($pod->type == 2) {{ $pod->size }} - @endif X {{ $pod->qty }}
