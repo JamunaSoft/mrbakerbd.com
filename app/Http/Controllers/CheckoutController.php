@@ -13,8 +13,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use stdClass;
 use Illuminate\Support\Arr;
+use App\Services\IpCountryService;
 
 class CheckoutController extends Controller
 {
@@ -24,6 +26,9 @@ class CheckoutController extends Controller
       //  dd($request->all());
         $data = $request->validate([
             'customer_name' => 'required|string|max:255',
+            'delivery_country' => 'required|string|max:100',
+            'division' => 'required|string|max:100',
+            'district' => 'required|string|max:100',
             'area' => 'required|string',
             'address_details' => 'required|string',
             'email' => 'required|email',
@@ -40,6 +45,26 @@ class CheckoutController extends Controller
         $cart = session()->get('cart', []);
         if (empty($cart)) {
             return back()->with('error', 'Your cart is empty.');
+        }
+
+        foreach ($cart as $cartKey => $item) {
+            $productId = (int) explode('-', (string) $cartKey)[0];
+            $product = \App\Models\Product::find($productId);
+            if (!$product || !$product->status) {
+                return back()->with('error', 'One of the products is no longer available.');
+            }
+
+            $expectedPrice = $product->special_price ?? $product->regular_price;
+            if (!empty($item['variant_id'])) {
+                $variant = $product->details()->find($item['variant_id']);
+                $expectedPrice = $variant ? ($variant->special_price ?? $variant->regular_price) : null;
+            }
+            if ($expectedPrice === null || (float) $expectedPrice !== (float) $item['price']) {
+                return back()->with('error', 'A product price has changed. Please review your cart.');
+            }
+            if ($product->stock !== null && (int) $product->stock < (int) $item['quantity']) {
+                return back()->with('error', 'One of the products does not have enough stock.');
+            }
         }
 
         // Handle customer
@@ -77,6 +102,7 @@ class CheckoutController extends Controller
        // dd($shipping);
         $total = $subtotal + $shipping;
         $totalQty = collect($cart)->sum('quantity');
+        $paymentCountry = app(IpCountryService::class)->country($request->ip());
 
         // Create order
         $order = Order::create([
@@ -85,6 +111,11 @@ class CheckoutController extends Controller
             'email' => $data['email'],
             'phone' => $data['phone'],
             'address' => $data['address_details'] . ', ' . $data['area'],
+            'payment_country' => $paymentCountry,
+            'delivery_country' => $data['delivery_country'],
+            'division' => $data['division'],
+            'district' => $data['district'],
+            'area' => $data['area'],
             'delv_dt' => $data['delv_d'] . ', ' . $data['time'],
             'notes' => isset($data['notes']) ? $data['notes'] : null,
             'total_qty' => $totalQty,
@@ -126,7 +157,7 @@ class CheckoutController extends Controller
         $this->sendNotifications($order);
         session()->flash('msg', 'Thank you for your order. Your order has been placed successfully.');
       //  return redirect()->route('orderplaced');
-        return redirect()->route('order.success', $order->id);
+        return redirect()->to(URL::temporarySignedRoute('order.success', now()->addHours(2), ['order_id' => $order->id]));
     }
 
     private function initiateSslCommerzPayment($order)
@@ -253,7 +284,7 @@ class CheckoutController extends Controller
         }
 
         session()->flash('source', $order->source);
-        return redirect()->route('order.success', $order->id);
+        return redirect()->to(URL::temporarySignedRoute('order.success', now()->addHours(2), ['order_id' => $order->id]));
     }
 
     public function paymentFail(Request $request)
@@ -365,7 +396,7 @@ class CheckoutController extends Controller
     public function getAreaCharge(Request $request)
     {
         $area = $request->input('area');
-        $charge = DB::table('areas')->where('name', $area)->value('charge') ?? 0;
+        $charge = DB::table('dhaka_areas')->where('name', $area)->value('charge') ?? 0;
         return response()->json(['charge' => $charge]);
     }
 

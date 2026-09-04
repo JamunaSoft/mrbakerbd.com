@@ -13,7 +13,7 @@ class SlideController extends Controller
 {
     public function index()
     {
-        $slides = Slide::orderBy('position', 'asc')->get();
+        $slides = Slide::orderBy('position', 'asc')->paginate(25)->withQueryString();
 
         return view('backend.slide.index', ['slides' => $slides]);
     }

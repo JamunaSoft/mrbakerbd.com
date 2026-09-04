@@ -65,14 +65,16 @@ DB_PASSWORD=
 php artisan migrate --seed
 ```
 
-8. Start the development server:
-```bash
-php artisan serve
-```
-
-9. Start Vite development server:
+8. Start the development server (Laravel and Vite together):
 ```bash
 npm run dev
+```
+The application is available at `http://127.0.0.1:8000`. Stop both development
+processes with `Ctrl+C`.
+
+To build frontend assets for production:
+```bash
+npm run build
 ```
 
 ## API Documentation

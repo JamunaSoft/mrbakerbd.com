@@ -1,4 +1,6 @@
 @extends('frontend.index')
+@section('seo_title', 'Shop Cakes, Pastries and Bakery Products | ' . ($settings->site_title ?? 'Mr. Baker'))
+@section('seo_description', 'Browse and order cakes, pastries, biscuits, sweets and other fresh bakery products from Mr. Baker.')
 @section('page-styles')
    <style>
        @media (max-width: 576px) {
@@ -31,7 +33,7 @@
 @stop
 @section('content')
       <section class="breadcrumbs-custom">
-        <div class="parallax-container" data-parallax-img="{{asset('images/mr-shop.jpg')}}">
+        <div class="parallax-container" data-parallax-img="{{optimized_asset('images/mr-shop.jpg')}}">
           <div class="breadcrumbs-custom-body parallax-content context-dark"  style="min-height: 20px">
             <div class="container">
               <h2 class="breadcrumbs-custom-title">Mr. Baker Shop</h2>
@@ -123,8 +125,8 @@
                                               <div class="unit unit-spacing-sm flex-column flex-md-row align-items-center">
                                                   <div class="unit-left">
                                                       <a class="product-minimal-figure" href="{{ route('product', $popular->slug) }}">
-                                                          @if ($popular->image && file_exists(public_path($popular->image->path . '/thumbs/' . $popular->image->name)))
-                                                              <img src="{{ $popular->image->thumbnail_url }}" style="width: 70px; height: 70px;" alt="{{ $popular->name }}">
+                                                          @if ($popular->image && file_exists(public_path($popular->image->path . '/' . $popular->image->name)))
+                                                              <img src="{{ file_exists(public_path($popular->image->path . '/thumbs/' . $popular->image->name)) ? $popular->image->optimized_thumbnail_url : $popular->image->optimized_url }}" loading="lazy" decoding="async" style="width: 70px; height: 70px;" alt="{{ $popular->name }}">
                                                           @else
                                                               <img src="{{ asset('images/products/placeholder.png') }}" alt="Image" style="width: 70px; height: 70px;">
                                                           @endif
@@ -182,8 +184,8 @@
                                       <div class="product-body">
                                           <a href="{{ route('product', $product->slug) }}" class="product-figure-link">
                                           <div class="product-figure">
-                                              @if ($product->image && file_exists(public_path($product->image->path . '/thumbs/' . $product->image->name)))
-                                                  <img src="{{ $product->image->thumbnail_url }}" class="img-responsive" width="300" height="170" style="width: 300px; height: 170px;" alt="{{ $product->name }}">
+                                              @if ($product->image && file_exists(public_path($product->image->path . '/' . $product->image->name)))
+                                                  <img src="{{ file_exists(public_path($product->image->path . '/thumbs/' . $product->image->name)) ? $product->image->optimized_thumbnail_url : $product->image->optimized_url }}" loading="lazy" decoding="async" class="img-responsive" width="300" height="170" style="width: 300px; height: 170px;" alt="{{ $product->name }}">
                                               @else
                                                   <img src="{{ asset('images/products/placeholder.png') }}" class="img-responsive" alt="Image" style="width: 300px; height: 170px;" width="300" height="170">
                                               @endif

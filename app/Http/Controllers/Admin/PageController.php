@@ -11,7 +11,7 @@ class PageController extends Controller
 {
     public function index()
     {
-        $pages = Page::orderBy('position', 'asc')->get();
+        $pages = Page::orderBy('position', 'asc')->paginate(25)->withQueryString();
 
         return view('backend.page.index', ['pages' => $pages]);
     }
@@ -90,6 +90,6 @@ class PageController extends Controller
         }
 
         session()->flash('success', 'Page is deleted!');
-        return redirect()->route('admin.pages');
+        return redirect()->route('admin.pages.index');
     }
 }

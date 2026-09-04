@@ -38,11 +38,9 @@ Route::group(['middleware' => ['auth', 'role:Admin|Manager']], function () {
 
         // Page routes
         Route::resource('pages', PageController::class);
-        Route::get('/page/delete/{page}', [PageController::class, 'destroy'])->name('page.destroy');
 
         // Category routes
         Route::resource('categories', CategoryController::class);
-        Route::get('/category/delete/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
         Route::get('/flavours', [CategoryController::class, 'flavours'])->name('flavour.index');
         Route::get('/flavours/create', [CategoryController::class, 'createFlavour'])->name('flavour.create');
         Route::post('/flavours', [CategoryController::class, 'storeFlavour'])->name('flavour.store');
@@ -51,13 +49,11 @@ Route::group(['middleware' => ['auth', 'role:Admin|Manager']], function () {
 
         // Slide routes
         Route::resource('slides', SlideController::class);
-        Route::get('/slide/delete/{slide}', [SlideController::class, 'delete'])->name('slide.delete');
 
 
         // Product routes
         Route::resource('products', ProductController::class);
         Route::get('/product/copy/{product}', [ProductController::class, 'copy'])->name('products.copy');
-        Route::get('/product/delete/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
         Route::delete('products/gallery/{image}', [ProductController::class, 'deleteGalleryImage'])->name('products.gallery.delete');
         Route::delete('products/image/{product}', [ProductController::class, 'deleteMainImage'])->name('products.image.delete');
 
@@ -69,7 +65,6 @@ Route::group(['middleware' => ['auth', 'role:Admin|Manager']], function () {
 
         // Order routes
         Route::resource('orders', OrderController::class);
-        Route::get('/order/delete/{order}', [OrderController::class, 'destroy'])->name('order.destroy');
 
     // Order view route (outside permission middleware)
     Route::get('/order/view/{order}', [OrderController::class, 'view'])->name('order.view');

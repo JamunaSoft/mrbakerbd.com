@@ -1,24 +1,45 @@
 <?php
 
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\CaseController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-
-use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Log;
+use App\Models\Category;
+use App\Models\Page;
+use App\Models\Product;
 
 
 Auth::routes(['verify' => true]);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/robots.txt', function () {
+    return response("User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /cart\nDisallow: /checkout\nDisallow: /search\nSitemap: " . url('/sitemap.xml') . "\n", 200)
+        ->header('Content-Type', 'text/plain');
+})->name('robots');
+
+Route::get('/sitemap.xml', function () {
+    $urls = collect([
+        ['loc' => route('home'), 'lastmod' => now()->toAtomString(), 'changefreq' => 'daily', 'priority' => '1.0'],
+        ['loc' => route('shop'), 'lastmod' => now()->toAtomString(), 'changefreq' => 'daily', 'priority' => '0.9'],
+    ])
+        ->merge(Category::where('status', 1)->get()->map(fn ($category) => [
+            'loc' => route('category', $category->slug), 'lastmod' => $category->updated_at?->toAtomString(), 'changefreq' => 'weekly', 'priority' => '0.8',
+        ]))
+        ->merge(Product::where('status', 1)->get()->map(fn ($product) => [
+            'loc' => route('product', $product->slug), 'lastmod' => $product->updated_at?->toAtomString(), 'changefreq' => 'weekly', 'priority' => '0.7',
+        ]))
+        ->merge(Page::where('status', 1)->get()->map(fn ($page) => [
+            'loc' => route('page', $page->slug), 'lastmod' => $page->updated_at?->toAtomString(), 'changefreq' => 'monthly', 'priority' => '0.5',
+        ]));
+
+    return response()->view('frontend.sitemap', compact('urls'))
+        ->header('Content-Type', 'application/xml');
+})->name('sitemap');
 Route::get('/product/{slug}', [ProductController::class, 'product'])->name('product');
 Route::get('/category/{slug}', [ProductController::class, 'category'])->name('category');
 Route::get('/shop', [ProductController::class, 'shop'])->name('shop');
@@ -39,12 +60,9 @@ Route::post('/cancel', [CheckoutController::class, 'paymentCancel'])->name('paym
 Route::post('/mrbipn', [CheckoutController::class, 'ipn'])->name('ipn');
 Route::post('/get-area-charge', [CheckoutController::class, 'getAreaCharge'])->name('get.area.charge');
 Route::get('/order-placed', function () { return view('frontend.pages.success'); })->name('orderplaced');
-Route::get('/order-success/{order_id}', [CheckoutController::class, 'success'])->name('order.success');
-
-
-Route::post('/test-csrf', function (Request $request) {
-    return response()->json(['status' => 'success', 'data' => $request->all()]);
-})->withoutMiddleware('csrf');
+Route::get('/order-success/{order_id}', [CheckoutController::class, 'success'])
+    ->middleware('signed')
+    ->name('order.success');
 
 Route::get('/outlets', [PageController::class, 'outlets'])->name('outlets');
 Route::get('/feedback', [PageController::class, 'feedback'])->name('feedback');
@@ -54,35 +72,11 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 
 
-Route::get('/clear-cache', [CaseController::class, 'clearCache'])->name('clear-cache');
-Route::get('/optimize', [CaseController::class, 'optimize'])->name('optimize');
-Route::get('/route-cache', [CaseController::class, 'routeCache'])->name('route-cache');
-Route::get('/route-clear', [CaseController::class, 'routeClear'])->name('route-clear');
-Route::get('/view-clear', [CaseController::class, 'viewClear'])->name('view-clear');
-Route::get('/config-cache', [CaseController::class, 'configCache'])->name('config-cache');
-
-
-Route::get('/mail-test', function () {
-    try {
-        Mail::raw('This is a test email from Laravel', function ($message) {
-            $message->to('kamrul@nextbell.com') // change this
-            ->subject('Laravel Mail Test');
-        });
-
-        return 'Email sent successfully!';
-    } catch (\Exception $e) {
-        return 'Error mail: ' . $e->getMessage();
-    }
-});
-
-
 Route::get('/{slug}', [PageController::class, 'page'])->name('page');
 
 Route::group(['middleware' => ['auth', 'role:User']], function () {
     Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
 });
-
-
 
 
 

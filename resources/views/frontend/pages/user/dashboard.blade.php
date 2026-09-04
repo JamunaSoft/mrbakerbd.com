@@ -1,7 +1,9 @@
 @extends('frontend.index')
+@section('seo_title', 'My Account | ' . ($settings->site_title ?? 'Mr. Baker'))
+@section('seo_robots', 'noindex, nofollow')
 @section('content')
 <section class="breadcrumbs-custom">
-    <div class="parallax-container" data-parallax-img="{{asset('frontend/images/breadcrumbs-bg.jpg')}}">
+    <div class="parallax-container" data-parallax-img="{{optimized_asset('frontend/images/breadcrumbs-bg.jpg')}}">
             <div class="breadcrumbs-custom-body parallax-content context-dark" style="min-height: 20px">
                 <div class="container">
                     <h2 class="breadcrumbs-custom-title">Dashboard</h2>

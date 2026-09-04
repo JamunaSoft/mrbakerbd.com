@@ -105,9 +105,13 @@ class CartController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'quantity' => ['required', 'integer', 'min:1', 'max:1000'],
+        ]);
+
         $cart = session('cart', []);
         if (isset($cart[$id])) {
-            $cart[$id]['quantity'] = (int) $request->input('quantity', 1);
+            $cart[$id]['quantity'] = $validated['quantity'];
             session(['cart' => $cart]);
         }
 

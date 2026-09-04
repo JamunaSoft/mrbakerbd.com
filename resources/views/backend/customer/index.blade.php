@@ -27,7 +27,7 @@
             </div>
             <!-- End Page Header -->
             <!-- Transaction History Table -->
-            <table id="mydatatable" class="transaction-history d-none">
+            <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -43,7 +43,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @php $i = 1 @endphp
+                @php $i = $customers->firstItem() @endphp
                 @foreach($customers as $user)
                     <tr>
                         <td> {{ $i++ }} </td>
@@ -53,7 +53,7 @@
                         <td> {{ $user->email }} </td>
                         <td><img src="@if ($user->photo) {{ asset($user->photo) }}  @else {{ asset('images/avatars/default.png') }} @endif" alt="Avatar" width="50"></td>
                         <td> {{ $user->address }} </td>
-                        <td> {{ Carbon\Carbon::parse($user->last_online)->diffForhumans() }} </td>
+                        <td> {{ $user->last_online ? $user->last_online->diffForHumans() : 'Never' }} </td>
                         <td> {{ $user->active ? 'Active' : 'Inactive' }} </td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
@@ -73,6 +73,10 @@
                 @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted">Showing {{ $customers->firstItem() ?? 0 }}-{{ $customers->lastItem() ?? 0 }} of {{ $customers->total() }} customers</small>
+                {{ $customers->links('pagination::bootstrap-4') }}
+            </div>
             <!-- End Transaction History Table -->
         </div>
 

@@ -56,11 +56,34 @@ class Image extends Model
         return asset($this->path . '/' . $this->name);
     }
 
+    public function getOptimizedUrlAttribute(): string
+    {
+        return $this->optimizedAssetUrl($this->path . '/' . $this->name, $this->url);
+    }
+
     public function getThumbnailUrlAttribute(): string
     {
         // Extract product slug from path
         $parts = explode('/', $this->path);
         $productSlug = $parts[2] ?? ''; // Get the product slug part
         return asset('images/products/' . $productSlug . '/thumbs/' . $this->name);
+    }
+
+    public function getOptimizedThumbnailUrlAttribute(): string
+    {
+        $parts = explode('/', $this->path);
+
+        return $this->optimizedAssetUrl(
+            'images/products/' . ($parts[2] ?? '') . '/thumbs/' . $this->name,
+            $this->thumbnail_url
+        );
+    }
+
+    private function optimizedAssetUrl(string $relativePath, string $fallback): string
+    {
+        $extension = pathinfo($relativePath, PATHINFO_EXTENSION);
+        $webpPath = substr($relativePath, 0, -(strlen($extension) + 1)) . '.webp';
+
+        return file_exists(public_path($webpPath)) ? asset($webpPath) : $fallback;
     }
 }

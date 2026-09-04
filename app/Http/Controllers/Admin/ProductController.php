@@ -26,7 +26,7 @@ class ProductController extends Controller
 
     public function index(): View
     {
-        $products = $this->productService->all();
+        $products = $this->productService->paginateForAdmin();
         return view('backend.products.index', compact('products'));
     }
 

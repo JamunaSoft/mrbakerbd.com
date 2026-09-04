@@ -329,4 +329,14 @@ class ProductService
     {
         return $this->productRepository->all()->load('image');
     }
+
+    public function paginateForAdmin(int $perPage = 25): LengthAwarePaginator
+    {
+        return Product::query()
+            ->select(['id', 'name', 'code', 'image_id', 'category_id', 'regular_price', 'special_price', 'featured', 'availability', 'status'])
+            ->with(['image', 'category'])
+            ->latest('id')
+            ->paginate($perPage)
+            ->withQueryString();
+    }
 }

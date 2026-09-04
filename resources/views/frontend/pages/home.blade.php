@@ -1,4 +1,6 @@
 @extends('frontend.index')
+@section('seo_title', ($settings->site_title ?? 'Mr. Baker') . ' | Fresh Cakes, Pastries and Bakery Products in Bangladesh')
+@section('seo_description', 'Order fresh cakes, pastries, biscuits, sweets and bakery products from Mr. Baker with convenient delivery in Bangladesh.')
 @section('page-styles')
     @include('frontend.style.home')
 @stop
@@ -10,7 +12,7 @@
             @foreach($slides as $index => $slide)
                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                     <section class="carousel-slide-section"
-                             style="background-image: url('{{ asset('images/slides/' . $slide->image) }}');">
+                             style="background-image: url('{{ optimized_asset('images/slides/' . $slide->image) }}');">
                         <div class="container h-100 d-flex align-items-center">
                             <div class="row w-100">
                                 <div class="col-12 col-md-8 col-lg-6 text-start">

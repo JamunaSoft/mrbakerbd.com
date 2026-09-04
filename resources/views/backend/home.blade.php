@@ -195,6 +195,34 @@
                 </div>
               </div>
             </div>
+            <div class="row">
+              @foreach([
+                ['title' => 'Payment Country', 'items' => $paymentCountryStats],
+                ['title' => 'Order Source', 'items' => $sourceStats],
+                ['title' => 'Delivery Country', 'items' => $deliveryCountryStats],
+                ['title' => 'Division', 'items' => $divisionStats],
+                ['title' => 'District', 'items' => $districtStats],
+                ['title' => 'Area', 'items' => $areaStats],
+              ] as $stat)
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
+                  <div class="card card-small">
+                    <div class="card-header border-bottom">
+                      <h6 class="m-0">{{ $stat['title'] }}</h6>
+                    </div>
+                    <ul class="list-group list-group-small list-group-flush">
+                      @forelse($stat['items'] as $item)
+                        <li class="list-group-item d-flex px-3">
+                          <span class="text-truncate mr-2">{{ $item->label }}</span>
+                          <strong class="ml-auto">{{ $item->total }}</strong>
+                        </li>
+                      @empty
+                        <li class="list-group-item text-muted">No data</li>
+                      @endforelse
+                    </ul>
+                  </div>
+                </div>
+              @endforeach
+            </div>
           </div>
 
           @include('backend.partials.footer')

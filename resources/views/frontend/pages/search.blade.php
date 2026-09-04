@@ -1,7 +1,9 @@
 @extends('frontend.index')
+@section('seo_title', 'Search Products | ' . ($settings->site_title ?? 'Mr. Baker'))
+@section('seo_robots', 'noindex, follow')
 @section('content')
     <section class="breadcrumbs-custom">
-        <div class="parallax-container" data-parallax-img="{{ asset('frontend/images/breadcrumbs-bg.jpg') }}">
+        <div class="parallax-container" data-parallax-img="{{ optimized_asset('frontend/images/breadcrumbs-bg.jpg') }}">
             <div class="breadcrumbs-custom-body parallax-content context-dark" style="min-height: 20px">
                 <div class="container">
                     <h2 class="breadcrumbs-custom-title">Search Results</h2>
@@ -38,8 +40,8 @@
                                     <div class="product-body">
                                         <a href="{{ route('product', $product->slug) }}" class="product-figure-link">
                                             <div class="product-figure">
-                                                @if ($product->image && file_exists(public_path($product->image->path . '/thumbs/' . $product->image->name)))
-                                                    <img src="{{ $product->image->thumbnail_url }}" width="300" height="200" style="width: 300px; height: 200px;" alt="{{ $product->name }}">
+                                                @if ($product->image && file_exists(public_path($product->image->path . '/' . $product->image->name)))
+                                                    <img src="{{ file_exists(public_path($product->image->path . '/thumbs/' . $product->image->name)) ? $product->image->optimized_thumbnail_url : $product->image->optimized_url }}" loading="lazy" decoding="async" width="300" height="200" style="width: 300px; height: 200px;" alt="{{ $product->name }}">
                                                 @else
                                                     <img src="{{ asset('images/products/placeholder.png') }}" alt="Image" style="width: 300px; height: 200px;" width="300" height="200">
                                                 @endif

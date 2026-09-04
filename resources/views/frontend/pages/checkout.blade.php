@@ -1,4 +1,6 @@
 @extends('frontend.index')
+@section('seo_title', 'Checkout | ' . ($settings->site_title ?? 'Mr. Baker'))
+@section('seo_robots', 'noindex, nofollow')
 @section('page-styles')
     @include('frontend.style.checkout')
     <style>
@@ -10,7 +12,7 @@
 @stop
 @section('content')
     <section class="breadcrumbs-custom">
-        <div class="parallax-container" data-parallax-img="frontend/images/breadcrumbs-bg.jpg">
+        <div class="parallax-container" data-parallax-img="{{optimized_asset('frontend/images/breadcrumbs-bg.jpg')}}">
             <div class="breadcrumbs-custom-body parallax-content context-dark" style="min-height: 20px">
                 <div class="container">
                     <h2 class="breadcrumbs-custom-title">Checkout</h2>
@@ -83,6 +85,9 @@
                                     @endif
                                 </div>
                             </div>
+                            <input type="hidden" name="delivery_country" value="Bangladesh">
+                            <input type="hidden" name="division" value="Dhaka">
+                            <input type="hidden" name="district" value="Dhaka">
                             <div class="col-sm-12">
                                 <div class="form-wrap">
                                     <input class="form-input" id="checkout-phone-1" type="text" name="phone" placeholder="phone" required

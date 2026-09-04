@@ -51,11 +51,13 @@ class ImageUploadService implements ImageUploadServiceInterface
 
         // Save the main image
         $image->save($paths['main']);
+        $image->toWebp(80)->save($paths['webp']);
 
         // Create and save thumbnail if needed
         if ($type === self::TYPE_PRODUCTS) {
             $image->resize(self::THUMBNAIL_WIDTH, self::THUMBNAIL_HEIGHT)
                 ->save($paths['thumb']);
+            $image->toWebp(80)->save($paths['thumbWebp']);
         }
 
         // Create and return the Image model
@@ -92,8 +94,16 @@ class ImageUploadService implements ImageUploadServiceInterface
         if (file_exists($fullPath) && is_file($fullPath)) {
             unlink($fullPath);
         }
+        $webpPath = pathinfo($fullPath, PATHINFO_DIRNAME) . '/' . pathinfo($fullPath, PATHINFO_FILENAME) . '.webp';
+        if (file_exists($webpPath) && is_file($webpPath)) {
+            unlink($webpPath);
+        }
         if (file_exists($thumbnailPath) && is_file($thumbnailPath)) {
             unlink($thumbnailPath);
+        }
+        $thumbnailWebpPath = public_path(pathinfo($path, PATHINFO_DIRNAME) . '/thumbs/' . pathinfo($path, PATHINFO_FILENAME) . '.webp');
+        if (file_exists($thumbnailWebpPath) && is_file($thumbnailWebpPath)) {
+            unlink($thumbnailWebpPath);
         }
 
         return true;
@@ -149,7 +159,11 @@ class ImageUploadService implements ImageUploadServiceInterface
 
         return [
             'main' => $mainPath,
+            'webp' => substr($mainPath, 0, -(strlen(pathinfo($mainPath, PATHINFO_EXTENSION)) + 1)) . '.webp',
             'thumb' => $thumbPath,
+            'thumbWebp' => $thumbPath
+                ? substr($thumbPath, 0, -(strlen(pathinfo($thumbPath, PATHINFO_EXTENSION)) + 1)) . '.webp'
+                : null,
             'relative' => $relativePath,
             'filename' => $filename,
         ];

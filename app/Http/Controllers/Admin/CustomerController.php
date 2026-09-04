@@ -12,7 +12,11 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = User::role('User')->orderBy('id', 'desc')->get();
+        $customers = User::role('User')
+            ->select(['id', 'name', 'details', 'phone', 'email', 'photo', 'address', 'last_online', 'active'])
+            ->latest('id')
+            ->paginate(25)
+            ->withQueryString();
 
         return view('backend.customer.index', compact('customers'));
     }

@@ -30,6 +30,11 @@ class UserService extends BaseService
     }
     public function getUsersByRoles(array $roles)
     {
-        return User::role($roles)->paginate(15);
+        return User::role($roles)
+            ->select(['users.id', 'users.name', 'users.details', 'users.phone', 'users.email', 'users.photo', 'users.address', 'users.last_online', 'users.active'])
+            ->with('roles:id,name')
+            ->latest('users.id')
+            ->paginate(25)
+            ->withQueryString();
     }
 }

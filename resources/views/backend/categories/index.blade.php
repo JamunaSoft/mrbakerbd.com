@@ -27,7 +27,7 @@
             </div>
             <!-- End Page Header -->
             <!-- Transaction History Table -->
-            <table id="mydatatable" class="transaction-history d-none">
+            <table class="table table-bordered">
               <thead>
                 <tr>
                   <th>#</th>
@@ -41,7 +41,7 @@
                 </tr>
               </thead>
               <tbody>
-                @php $i = 1 @endphp
+                @php $i = $categories->firstItem() @endphp
                 @foreach($categories as $category)
                 <tr>
                   <td> {{ $i++ }} </td>
@@ -75,6 +75,10 @@
                 @endforeach
               </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-muted">Showing {{ $categories->firstItem() ?? 0 }}-{{ $categories->lastItem() ?? 0 }} of {{ $categories->total() }} categories</small>
+              {{ $categories->links('pagination::bootstrap-4') }}
+            </div>
             <!-- End Transaction History Table -->
           </div>
 

@@ -14,10 +14,15 @@ class OrderController extends Controller
 {
     public function index()
     {
-        //$orders = Order::where('status', 'Pending')->orWhere('status', 'Processing')->orderBy('id', 'desc')->get();
-        $orders = Order::orderBy('id', 'desc')->get();
-      //  dd($orders);
-        // return $orders;
+        $orders = Order::query()
+            ->select([
+                'id', 'name', 'phone', 'address', 'created_at', 'total_qty',
+                'payable_amount', 'payment_status', 'status', 'source',
+            ])
+            ->latest('id')
+            ->paginate(25)
+            ->withQueryString();
+
         return view('backend.order.index', ['orders' => $orders]);
     }
 
@@ -33,7 +38,12 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
-        if($order->status != 'Complete' && $request->status == 'Complete')
+        $data = $request->validate([
+            'status' => ['required', 'string', 'in:Pending,Processing,Complete,Cancelled,Failed'],
+            'send_email' => ['nullable', 'boolean'],
+        ]);
+
+        if($order->status != 'Complete' && $data['status'] == 'Complete')
         {
             foreach($order->details as $od)
             {
@@ -43,7 +53,7 @@ class OrderController extends Controller
             }
         }
 
-        $order->status = $request->status;
+        $order->status = $data['status'];
         $order->save();
 
         if($request->send_email == 1)

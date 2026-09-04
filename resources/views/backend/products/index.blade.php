@@ -27,7 +27,7 @@
             </div>
             <!-- End Page Header -->
             <!-- Transaction History Table -->
-            <table id="mydatatable" class="transaction-history">
+            <table class="table table-bordered">
               <thead>
                 <tr>
                   <th>#</th>
@@ -43,15 +43,15 @@
                 </tr>
               </thead>
               <tbody>
-                @php $i = 1 @endphp
+                @php $i = $products->firstItem() @endphp
                 @foreach($products as $product)
                 <tr>
                   <td> {{ $i++ }} </td>
                   <td> {{ $product->name }} </td>
                   <td> {{ $product->code }} </td>
                   <td>
-                    @if ($product->image && file_exists(public_path($product->image->path . '/thumbs/' . $product->image->name)))
-                      <img src="{{ $product->image->thumbnail_url }}" alt="Image" width="100">
+                    @if ($product->image && file_exists(public_path($product->image->path . '/' . $product->image->name)))
+                      <img src="{{ file_exists(public_path($product->image->path . '/thumbs/' . $product->image->name)) ? $product->image->optimized_thumbnail_url : $product->image->optimized_url }}" alt="{{ $product->image->alt ?: $product->name }}" width="100" height="70" loading="lazy" decoding="async">
                     @else
                       <img src="{{ asset('images/products/placeholder.png') }}" alt="Image" width="100">
                     @endif
@@ -88,6 +88,10 @@
                 @endforeach
               </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-muted">Showing {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} of {{ $products->total() }} products</small>
+              {{ $products->links('pagination::bootstrap-4') }}
+            </div>
             <!-- End Transaction History Table -->
           </div>
 

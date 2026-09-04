@@ -27,7 +27,7 @@
             </div>
             <!-- End Page Header -->
             <!-- Transaction History Table -->
-            <table id="mydatatable" class="transaction-history d-none">
+            <table class="table table-bordered">
               <thead>
                 <tr>
                   <th>#</th>
@@ -44,7 +44,7 @@
                 </tr>
               </thead>
               <tbody>
-                @php $i = 1 @endphp
+                @php $i = $users->firstItem() @endphp
                 @foreach($users as $user)
                 <tr>
                   <td> {{ $i++ }} </td>
@@ -55,7 +55,7 @@
                   <td><img src="@if ($user->photo) {{ asset($user->photo) }} @elseif (App\Helpers\GravatarHelper::validate_gravatar($user->email)) {{ App\Helpers\GravatarHelper::gravatar_image($user->email) }} @else {{ asset('images/avatars/default.png') }} @endif" alt="Avatar" width="50"></td>
                   <td> {{ $user->address }} </td>
                     <td>{{ $user->getRoleNames()->first() }}</td>
-                  <td> {{ Carbon\Carbon::parse($user->last_online)->diffForhumans() }} </td>
+                  <td> {{ $user->last_online ? $user->last_online->diffForHumans() : 'Never' }} </td>
                   <td> {{ $user->active ? 'Active' : 'Inactive' }} </td>
                   <td>
                       <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
@@ -75,6 +75,10 @@
                 @endforeach
               </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-muted">Showing {{ $users->firstItem() ?? 0 }}-{{ $users->lastItem() ?? 0 }} of {{ $users->total() }} users</small>
+              {{ $users->links('pagination::bootstrap-4') }}
+            </div>
             <!-- End Transaction History Table -->
           </div>
 

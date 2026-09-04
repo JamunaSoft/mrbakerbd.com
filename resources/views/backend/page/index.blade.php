@@ -27,7 +27,7 @@
             </div>
             <!-- End Page Header -->
             <!-- Transaction History Table -->
-            <table id="mydatatable" class="transaction-history d-none">
+            <table class="table table-bordered">
               <thead>
                 <tr>
                   <th>#</th>
@@ -39,7 +39,7 @@
                 </tr>
               </thead>
               <tbody>
-                @php $i = 1 @endphp
+                @php $i = $pages->firstItem() @endphp
                 @foreach($pages as $page)
                 <tr>
                   <td> {{ $i++ }} </td>
@@ -52,15 +52,23 @@
                       <a href="{{ route('admin.pages.edit', $page->id) }}" class="btn btn-info" title="Edit">
                         <i class="material-icons">&#xE254;</i>
                       </a>
-                      <a href="{{ route('admin.pages.destroy', $page->id) }}" class="btn btn-salmon delete" title="Delete">
-                        <i class="material-icons">&#xE872;</i>
-                      </a>
+                      <form action="{{ route('admin.pages.destroy', $page->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this page?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-salmon delete" title="Delete">
+                          <i class="material-icons">&#xE872;</i>
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
                 @endforeach
               </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-muted">Showing {{ $pages->firstItem() ?? 0 }}-{{ $pages->lastItem() ?? 0 }} of {{ $pages->total() }} pages</small>
+              {{ $pages->links('pagination::bootstrap-4') }}
+            </div>
             <!-- End Transaction History Table -->
           </div>
 

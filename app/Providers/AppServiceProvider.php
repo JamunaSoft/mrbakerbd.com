@@ -52,14 +52,14 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
-        View::composer('*', function ($view){
+        View::composer('frontend.*', function ($view){
             $categories = Category::orderBy('position', 'asc')->get();
             $view->with([
                 'categories' => $categories,
             ]);
         });
 
-        View::composer('*', function ($view){
+        View::composer('frontend.*', function ($view){
             $pages = Page::all();
             $view->with([
                 'pages' => $pages,

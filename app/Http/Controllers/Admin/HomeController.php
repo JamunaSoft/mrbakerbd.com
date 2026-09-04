@@ -10,21 +10,86 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
     public function index()
     {
-		$c_count = DB::table('customers')->count();
-		$o_count = DB::table('orders')->count();
-		$po_count = DB::table('orders')->where('status', 'Pending')->count();
-		$co_count = DB::table('orders')->where('status', 'Complete')->count();
+        $counts = Cache::remember('admin.dashboard.counts', 30, function () {
+            return DB::table('orders')
+                ->selectRaw('COUNT(*) as orders_count')
+                ->selectRaw("SUM(status = 'Pending') as pending_count")
+                ->selectRaw("SUM(status = 'Complete') as complete_count")
+                ->first();
+        });
 
-		$top_selling_pro = Product::where('sales', '>', 0)->orderBy('sales', 'desc')->limit(10)->get();
-		$processing_orders = Order::where('status', 'Processing')->orderBy('id', 'desc')->get();
-		$most_viewed_pro = Product::where('views', '>', 0)->orderBy('views', 'desc')->limit(10)->get();
+        $c_count = Cache::remember('admin.dashboard.customers_count', 30, fn () => DB::table('customers')->count());
+        $o_count = (int) $counts->orders_count;
+        $po_count = (int) $counts->pending_count;
+        $co_count = (int) $counts->complete_count;
 
-        return view('backend.home', ['c_count' => $c_count, 'o_count' => $o_count, 'po_count' => $po_count, 'co_count' => $co_count, 'top_selling_pro' => $top_selling_pro, 'processing_orders' => $processing_orders, 'most_viewed_pro' => $most_viewed_pro]);
+        $top_selling_pro = Product::query()
+            ->select(['id', 'name', 'sales'])
+            ->where('sales', '>', 0)
+            ->orderByDesc('sales')
+            ->limit(10)
+            ->get();
+        $processing_orders = Order::query()
+            ->select(['id', 'name', 'phone', 'created_at', 'delv_dt', 'address', 'notes'])
+            ->where('status', 'Processing')
+            ->with(['details:id,order_id,product_id,qty'])
+            ->latest('id')
+            ->limit(10)
+            ->get();
+        $most_viewed_pro = Product::query()
+            ->select(['id', 'name', 'views'])
+            ->where('views', '>', 0)
+            ->orderByDesc('views')
+            ->limit(10)
+            ->get();
+
+        $paymentCountryStats = Order::query()
+            ->selectRaw("COALESCE(NULLIF(payment_country, ''), 'Unknown') as label, COUNT(*) as total")
+            ->groupBy('label')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
+        $sourceStats = Order::query()
+            ->selectRaw("COALESCE(NULLIF(source, ''), 'Unknown') as label, COUNT(*) as total")
+            ->groupBy('label')
+            ->orderByDesc('total')
+            ->get();
+        $deliveryCountryStats = Order::query()
+            ->selectRaw("COALESCE(NULLIF(delivery_country, ''), 'Bangladesh') as label, COUNT(*) as total")
+            ->groupBy('label')
+            ->orderByDesc('total')
+            ->get();
+        $divisionStats = Order::query()
+            ->selectRaw("COALESCE(NULLIF(division, ''), 'Unknown') as label, COUNT(*) as total")
+            ->groupBy('label')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
+        $districtStats = Order::query()
+            ->selectRaw("COALESCE(NULLIF(district, ''), 'Unknown') as label, COUNT(*) as total")
+            ->groupBy('label')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
+        $areaStats = Order::query()
+            ->selectRaw("COALESCE(NULLIF(area, ''), 'Unknown') as label, COUNT(*) as total")
+            ->groupBy('label')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
+
+        return view('backend.home', compact(
+            'c_count', 'o_count', 'po_count', 'co_count', 'top_selling_pro',
+            'processing_orders', 'most_viewed_pro', 'paymentCountryStats',
+            'sourceStats', 'deliveryCountryStats', 'divisionStats',
+            'districtStats', 'areaStats'
+        ));
     }
 
     public function profile()
@@ -60,12 +125,12 @@ class HomeController extends Controller
 
     public function contacts()
     {
-        $contacts = DB::table('contacts')->orderBy('id', 'desc')->get();
+        $contacts = DB::table('contacts')->orderByDesc('id')->paginate(25)->withQueryString();
         return view('backend.contacts.index', compact('contacts'));
     }
     public function feedbacks()
     {
-        $feedbacks = DB::table('feedback')->orderBy('id', 'desc')->get();
+        $feedbacks = DB::table('feedback')->orderByDesc('id')->paginate(25)->withQueryString();
         return view('backend.feedbacks.index', compact('feedbacks'));
     }
 }

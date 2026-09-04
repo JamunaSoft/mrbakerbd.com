@@ -20,7 +20,11 @@ class CategoryController extends Controller
 
     public function index(): View
     {
-        $categories = $this->categoryService->getAll()->sortByDesc('id');
+        $categories = Category::query()
+            ->with(['iconImage', 'parent'])
+            ->latest('id')
+            ->paginate(25)
+            ->withQueryString();
         return view('backend.categories.index', compact('categories'));
     }
 

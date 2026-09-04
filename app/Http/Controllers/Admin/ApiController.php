@@ -15,6 +15,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use App\Services\IpCountryService;
 
 class ApiController extends Controller
 {
@@ -310,6 +311,11 @@ class ApiController extends Controller
             $order->phone = $request->phone;
             $order->address = $request->address;
             $order->email = $request->email;
+            $order->payment_country = app(IpCountryService::class)->country($request->ip());
+            $order->delivery_country = 'Bangladesh';
+            $order->division = $request->input('division', 'Dhaka');
+            $order->district = $request->input('district', 'Dhaka');
+            $order->area = $request->input('area');
             $order->notes = $request->notes;
             $order->total_qty = $total_qty;
             $order->total_price = $total_price;

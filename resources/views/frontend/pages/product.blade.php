@@ -1,4 +1,8 @@
 @extends('frontend.index')
+@section('seo_title', ($product->meta_title ?: $product->name) . ' | ' . ($settings->site_title ?? 'Mr. Baker'))
+@section('seo_description', $product->meta_description ?: ($product->short_desc ?: strip_tags($product->description)))
+@section('seo_keywords', $product->meta_keywords)
+@section('seo_type', 'product')
 @section('page-styles')
     @include('frontend.style.product')
 @stop
@@ -16,7 +20,7 @@
                             <div class="item">
                                 <div class="slick-product-figure">
                                     @if ($product->image && file_exists(public_path($product->image->path . '/' . $product->image->name)))
-                                        <img src="{{ asset($product->image->url) }}" width="530" height="480" alt="{{ $product->name }}">
+                                        <img src="{{ $product->image->optimized_url }}" width="530" height="480" alt="{{ $product->name }}">
                                     @else
                                         <img src="{{ asset('images/products/placeholder.png') }}" alt="Image" width="530" height="480">
                                     @endif
@@ -27,7 +31,7 @@
                                 <div class="item">
                                     <div class="slick-product-figure">
                                         @if ($productImage && file_exists(public_path($productImage->path . '/' . $productImage->name)))
-                                            <img src="{{ asset($productImage->url) }}" width="530" height="480" alt="{{ $product->name }}">
+                                            <img src="{{ $productImage->optimized_url }}" loading="lazy" decoding="async" width="530" height="480" alt="{{ $product->name }}">
                                         @else
                                             <img src="{{ asset('images/products/placeholder.png') }}" alt="Image" width="530" height="480">
                                         @endif
@@ -44,7 +48,7 @@
                             <div class="item">
                                 <div class="slick-product-figure">
                                     @if ($product->image && file_exists(public_path($product->image->path . '/' . $product->image->name)))
-                                        <img src="{{ asset($product->image->url) }}" width="530" height="480" alt="{{ $product->name }}">
+                                        <img src="{{ $product->image->optimized_url }}" width="530" height="480" alt="{{ $product->name }}">
                                     @else
                                         <img src="{{ asset('images/products/placeholder.png') }}" alt="Image" width="530" height="480">
                                     @endif
@@ -55,7 +59,7 @@
                                 <div class="item">
                                     <div class="slick-product-figure">
                                         @if ($productImage && file_exists(public_path($productImage->path . '/' . $productImage->name)))
-                                            <img src="{{ asset($productImage->url) }}" width="530" height="480" alt="{{ $product->name }}">
+                                            <img src="{{ $productImage->optimized_url }}" loading="lazy" decoding="async" width="530" height="480" alt="{{ $product->name }}">
                                         @else
                                             <img src="{{ asset('images/products/placeholder.png') }}" alt="Image" width="530" height="480">
                                         @endif
@@ -242,8 +246,8 @@
                             <div class="product-body">
                                 <a href="{{ route('product', $related->slug) }}">
                                     <div class="product-figure">
-                                        @if ($related->image && file_exists(public_path($related->image->path . '/thumbs/' . $related->image->name)))
-                                            <img src="{{ $related->image->thumbnail_url }}" class="img-responsive" width="300" height="170" style="width: 300px; height: 170px;" alt="{{ $related->name }}">
+                                        @if ($related->image && file_exists(public_path($related->image->path . '/' . $related->image->name)))
+                                            <img src="{{ file_exists(public_path($related->image->path . '/thumbs/' . $related->image->name)) ? $related->image->optimized_thumbnail_url : $related->image->optimized_url }}" loading="lazy" decoding="async" class="img-responsive" width="300" height="170" style="width: 300px; height: 170px;" alt="{{ $related->name }}">
                                         @else
                                             <img src="{{ asset('images/products/placeholder.png') }}" class="img-responsive" alt="Image"  style="width: 300px; height: 170px;" width="300" height="170">
                                         @endif
@@ -307,8 +311,8 @@
                             <div class="product-body">
                                 <a href="{{ route('product', $related->slug) }}">
                                     <div class="product-figure">
-                                        @if ($related->image && file_exists(public_path($related->image->path . '/thumbs/' . $related->image->name)))
-                                            <img src="{{ $related->image->thumbnail_url }}" class="img-responsive" width="300" height="170" style="width: 300px; height: 170px;" alt="{{ $related->name }}">
+                                        @if ($related->image && file_exists(public_path($related->image->path . '/' . $related->image->name)))
+                                            <img src="{{ file_exists(public_path($related->image->path . '/thumbs/' . $related->image->name)) ? $related->image->optimized_thumbnail_url : $related->image->optimized_url }}" loading="lazy" decoding="async" class="img-responsive" width="300" height="170" style="width: 300px; height: 170px;" alt="{{ $related->name }}">
                                         @else
                                             <img src="{{ asset('images/products/placeholder.png') }}"  class="img-responsive" alt="Image"  style="width: 300px; height: 170px;" width="300" height="170">
                                         @endif
@@ -642,4 +646,24 @@
         });
     </script>
     @endif
+    @php
+        $productPrice = $product->type == 1 ? $product->regular_price : $product->details->min('regular_price');
+        $productSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $product->name,
+            'description' => strip_tags($product->meta_description ?: ($product->short_desc ?: $product->description)),
+            'url' => route('product', $product->slug),
+            'image' => $product->image?->optimized_url,
+            'brand' => ['@type' => 'Brand', 'name' => $settings->site_title ?? 'Mr. Baker'],
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => route('product', $product->slug),
+                'priceCurrency' => 'BDT',
+                'price' => $productPrice,
+                'availability' => $product->availability ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">@json($productSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
 @endsection

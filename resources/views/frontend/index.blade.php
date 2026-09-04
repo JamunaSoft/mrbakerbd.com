@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html class="wide wow-animation" lang="en">
   <head>
-    <title>{{ Cache::get('settings')->site_title }}</title>
+    <title>@yield('seo_title', Cache::get('settings')->site_title)</title>
     @include('frontend.layouts.meta')
+    @include('frontend.layouts.analytics-head')
     @include('frontend.layouts.style')
   </head>
   <body>
+  @include('frontend.layouts.analytics-body')
   <div class="preloader">
       <div class="preloader-body">
           <div class="cssload-bell">

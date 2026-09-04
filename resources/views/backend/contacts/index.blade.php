@@ -20,7 +20,7 @@
             </div>
             <!-- End Page Header -->
             <!-- Contacts Table -->
-            <table id="mydatatable" class="transaction-history d-none">
+            <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -32,7 +32,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @php $i = 1 @endphp
+                @php $i = $contacts->firstItem() @endphp
                 @foreach($contacts as $contact)
                     <tr>
                         <td> {{ $i++ }} </td>
@@ -45,6 +45,10 @@
                 @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted">Showing {{ $contacts->firstItem() ?? 0 }}-{{ $contacts->lastItem() ?? 0 }} of {{ $contacts->total() }} contacts</small>
+                {{ $contacts->links('pagination::bootstrap-4') }}
+            </div>
             <!-- End Contacts Table -->
         </div>
 

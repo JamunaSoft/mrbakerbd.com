@@ -1,7 +1,7 @@
 @extends('index')
 @section('content')
       <section class="breadcrumbs-custom">
-        <div class="parallax-container" data-parallax-img="images/breadcrumbs-bg.jpg">
+        <div class="parallax-container" data-parallax-img="{{optimized_asset('frontend/images/breadcrumbs-bg.jpg')}}">
           <div class="breadcrumbs-custom-body parallax-content context-dark">
             <div class="container">
               <h2 class="breadcrumbs-custom-title">Forms</h2>

@@ -20,7 +20,7 @@
             </div>
             <!-- End Page Header -->
             <!-- Feedback Table -->
-            <table id="mydatatable" class="transaction-history d-none">
+            <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -33,7 +33,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @php $i = 1 @endphp
+                @php $i = $feedbacks->firstItem() @endphp
                 @foreach($feedbacks as $feedback)
                     <tr>
                         <td> {{ $i++ }} </td>
@@ -47,6 +47,10 @@
                 @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted">Showing {{ $feedbacks->firstItem() ?? 0 }}-{{ $feedbacks->lastItem() ?? 0 }} of {{ $feedbacks->total() }} feedbacks</small>
+                {{ $feedbacks->links('pagination::bootstrap-4') }}
+            </div>
             <!-- End Feedback Table -->
         </div>
 

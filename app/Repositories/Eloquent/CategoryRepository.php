@@ -102,7 +102,6 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
         $this->addCacheKey($key);
         return $this->remember($key, function () {
             return $this->optimizeQuery($this->model->query())
-                ->with('products')
                 ->get();
         });
     }
