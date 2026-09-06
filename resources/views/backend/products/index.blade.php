@@ -10,12 +10,15 @@
     #products-table td { vertical-align: middle; }
     #products-table th { white-space: nowrap; }
     #products-table th.sorting, #products-table th.sorting_asc, #products-table th.sorting_desc { cursor: pointer; }
-    #products-table th.sorting::after { content: ' ↕'; color: #adb5bd; }
-    #products-table th.sorting_asc::after { content: ' ↑'; }
-    #products-table th.sorting_desc::after { content: ' ↓'; }
     #products-table img { object-fit: contain; border-radius: 6px; }
     #products-table_wrapper .dataTables_length select { border: 1px solid #ddd; border-radius: 6px; padding: 6px; margin: 0 6px; }
-    .products-table-scroll { overflow-x: auto; margin-top: 12px; }
+    /* The theme floats DataTables controls at 50% width; keep this table stacked. */
+    #products-table_wrapper { width: 100%; min-width: 0; box-shadow: none; }
+    #products-table_wrapper .dataTables_length { float: none; width: 100%; padding: 0; }
+    #products-table_wrapper .dataTables_length label { margin: 0; }
+    #products-table_wrapper .products-table-scroll { clear: both; width: 100%; overflow-x: auto; margin-top: 12px; }
+    #products-table_wrapper .dataTables_info,
+    #products-table_wrapper .dataTables_paginate { float: none; width: auto; padding: 0; border: 0; background: transparent; }
     .products-table-footer { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding-top: 16px; }
     #products-table_wrapper .paginate_button { display: inline-block; padding: 6px 12px; margin: 2px; border: 1px solid #e1e5eb; border-radius: 6px; cursor: pointer; }
     #products-table_wrapper .paginate_button.current { background: #ffb400; color: #212529; border-color: #ffb400; }
