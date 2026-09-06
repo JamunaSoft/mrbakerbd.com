@@ -1,5 +1,29 @@
 @extends('backend.layouts.master')
 
+@section('page-style')
+<style>
+    .products-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,.04); }
+    .products-toolbar { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; align-items: flex-end; }
+    .products-search { flex: 1; min-width: 220px; }
+    .products-toolbar label { display: block; font-weight: 500; margin-bottom: 6px; }
+    #products-table { width: 100% !important; }
+    #products-table td { vertical-align: middle; }
+    #products-table th { white-space: nowrap; }
+    #products-table th.sorting, #products-table th.sorting_asc, #products-table th.sorting_desc { cursor: pointer; }
+    #products-table th.sorting::after { content: ' ↕'; color: #adb5bd; }
+    #products-table th.sorting_asc::after { content: ' ↑'; }
+    #products-table th.sorting_desc::after { content: ' ↓'; }
+    #products-table img { object-fit: contain; border-radius: 6px; }
+    #products-table_wrapper .dataTables_length select { border: 1px solid #ddd; border-radius: 6px; padding: 6px; margin: 0 6px; }
+    .products-table-scroll { overflow-x: auto; margin-top: 12px; }
+    .products-table-footer { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding-top: 16px; }
+    #products-table_wrapper .paginate_button { display: inline-block; padding: 6px 12px; margin: 2px; border: 1px solid #e1e5eb; border-radius: 6px; cursor: pointer; }
+    #products-table_wrapper .paginate_button.current { background: #ffb400; color: #212529; border-color: #ffb400; }
+    #products-table_wrapper .paginate_button.disabled { color: #adb5bd; cursor: default; }
+    #products-table_wrapper .dataTables_empty { text-align: center; padding: 32px; }
+</style>
+@endsection
+
 @section('content')
 
         <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
@@ -27,7 +51,23 @@
             </div>
             <!-- End Page Header -->
             <!-- Transaction History Table -->
-            <table class="table table-bordered">
+            <div class="products-card">
+              <div class="products-toolbar">
+                <div class="products-search">
+                  <label for="product-search">Search products</label>
+                  <input id="product-search" type="search" class="form-control" placeholder="Search by name, code or category…" aria-controls="products-table">
+                </div>
+                <div>
+                  <label for="product-status">Status</label>
+                  <select id="product-status" class="form-control" aria-controls="products-table">
+                    <option value="">All statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+                <button id="clear-product-filters" type="button" class="btn btn-outline-secondary">Clear filters</button>
+              </div>
+            <table id="products-table" class="table table-bordered table-hover">
               <thead>
                 <tr>
                   <th>#</th>
@@ -43,7 +83,7 @@
                 </tr>
               </thead>
               <tbody>
-                @php $i = $products->firstItem() @endphp
+                @php $i = 1 @endphp
                 @foreach($products as $product)
                 <tr>
                   <td> {{ $i++ }} </td>
@@ -58,7 +98,7 @@
                   </td>
                   <td> {{ $product->category ? $product->category->name : '' }}</td>
 
-                  <td>
+                  <td data-order="{{ $product->type == 2 ? ($product->details->min('regular_price') ?? 0) : ($product->regular_price ?? 0) }}">
                     @if($product->type == 1)
                         {{ $product->regular_price }}
                     @endif
@@ -88,9 +128,6 @@
                 @endforeach
               </tbody>
             </table>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-              <small class="text-muted">Showing {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} of {{ $products->total() }} products</small>
-              {{ $products->links('pagination::bootstrap-4') }}
             </div>
             <!-- End Transaction History Table -->
           </div>
@@ -110,6 +147,39 @@
 
 @section('page-script')
 <script>
+    $(function () {
+        const table = $('#products-table').DataTable({
+            pageLength: 25,
+            lengthMenu: [10, 25, 50, 100],
+            order: [],
+            dom: 'l<"products-table-scroll"t><"products-table-footer"ip>',
+            columnDefs: [
+                { targets: [3, 9], orderable: false, searchable: false },
+                { targets: [0], searchable: false }
+            ],
+            language: {
+                lengthMenu: 'Show _MENU_ products',
+                info: 'Showing _START_–_END_ of _TOTAL_ products',
+                infoEmpty: 'No products to display',
+                infoFiltered: '(filtered from _MAX_ products)',
+                emptyTable: 'No products yet. Add your first product to get started.',
+                zeroRecords: 'No matching products. Try another search or clear the filters.'
+            }
+        });
+
+        $('#product-search').on('input', function () {
+            table.search(this.value).draw();
+        });
+        $('#product-status').on('change', function () {
+            table.column(8).search(this.value ? '^' + this.value + '$' : '', true, false).draw();
+        });
+        $('#clear-product-filters').on('click', function () {
+            $('#product-search, #product-status').val('');
+            table.search('').columns().search('').draw();
+            $('#product-search').trigger('focus');
+        });
+    });
+
     function deleteProduct(id) {
         Swal.fire({
             title: 'Are you sure to delete this product?',

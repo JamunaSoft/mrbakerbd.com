@@ -330,6 +330,15 @@ class ProductService
         return $this->productRepository->all()->load('image');
     }
 
+    public function allForAdmin(): Collection
+    {
+        return Product::query()
+            ->select(['id', 'name', 'code', 'type', 'image_id', 'category_id', 'regular_price', 'featured', 'availability', 'status'])
+            ->with(['image', 'category', 'details'])
+            ->latest('id')
+            ->get();
+    }
+
     public function paginateForAdmin(int $perPage = 25): LengthAwarePaginator
     {
         return Product::query()
