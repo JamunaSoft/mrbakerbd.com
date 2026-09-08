@@ -89,11 +89,12 @@ class MetaConversionsApi
             }
 
             $response = Http::asJson()
+                ->withToken($accessToken)
                 ->connectTimeout(2)
                 ->timeout((int) config('services.meta_capi.timeout', 5))
                 ->post(
                     'https://graph.facebook.com/' . $version . '/' . rawurlencode($pixelId) . '/events',
-                    $payload + ['access_token' => $accessToken]
+                    $payload
                 );
 
             if (!$response->successful()) {
