@@ -15,6 +15,10 @@ use App\Models\Product;
 
 Auth::routes(['verify' => true]);
 
+Route::get('/admin', function () {
+    return redirect()->route('admin.dashboard');
+})->middleware(['auth', 'role:Admin|Manager'])->name('admin.index');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/robots.txt', function () {
@@ -77,6 +81,5 @@ Route::get('/{slug}', [PageController::class, 'page'])->name('page');
 Route::group(['middleware' => ['auth', 'role:User']], function () {
     Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
 });
-
 
 

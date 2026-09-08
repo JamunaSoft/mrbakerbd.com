@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\MarketingEvents;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -81,6 +82,9 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
+        $added = $cart[$cartKey];
+        $added['quantity'] = $validated['quantity'];
+        session()->flash('marketing_events', [MarketingEvents::event('add_to_cart', MarketingEvents::cartItems([$cartKey => $added]))]);
         return redirect()->route('cart')->with('success', 'Product added to cart!');
     }
 
@@ -91,6 +95,7 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {
+            session()->flash('marketing_events', [MarketingEvents::event('remove_from_cart', MarketingEvents::cartItems([$id => $cart[$id]]))]);
             unset($cart[$id]);
             session()->put('cart', $cart);
         }
@@ -99,6 +104,10 @@ class CartController extends Controller
 
     public function clear()
     {
+        $items = MarketingEvents::cartItems(session('cart', []));
+        if ($items) {
+            session()->flash('marketing_events', [MarketingEvents::event('remove_from_cart', $items)]);
+        }
         session()->forget('cart');
         return redirect()->back()->with('success', 'Cart cleared');
     }
@@ -111,6 +120,12 @@ class CartController extends Controller
 
         $cart = session('cart', []);
         if (isset($cart[$id])) {
+            $delta = $validated['quantity'] - $cart[$id]['quantity'];
+            if ($delta !== 0) {
+                $changed = $cart[$id];
+                $changed['quantity'] = abs($delta);
+                session()->flash('marketing_events', [MarketingEvents::event($delta > 0 ? 'add_to_cart' : 'remove_from_cart', MarketingEvents::cartItems([$id => $changed]))]);
+            }
             $cart[$id]['quantity'] = $validated['quantity'];
             session(['cart' => $cart]);
         }

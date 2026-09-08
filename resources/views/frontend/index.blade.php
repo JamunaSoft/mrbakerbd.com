@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html class="wide wow-animation" lang="en">
   <head>
+    @include('frontend.layouts.analytics-head')
     <title>@yield('seo_title', Cache::get('settings')->site_title)</title>
     @include('frontend.layouts.meta')
-    @include('frontend.layouts.analytics-head')
     @include('frontend.layouts.style')
   </head>
   <body>

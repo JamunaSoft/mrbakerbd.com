@@ -14,11 +14,7 @@ class SettingController extends Controller
 {
     public function settings()
     {
-        if(Auth::user()->id != 1)
-        {
-            session()->flash('fail', 'Access denied!');
-            return back();
-        }
+        abort_unless(Auth::user()->hasRole('Admin'), 403);
 
         $setting = Setting::where(['id' => '1'])->first();
 
@@ -27,7 +23,16 @@ class SettingController extends Controller
 
     public function update(Request $request, Setting $setting)
     {
+        abort_unless(Auth::user()->hasRole('Admin'), 403);
+
         $request->validate([
+            'google_tag_manager_id' => ['nullable', 'string', 'max:64', 'regex:/\AGTM-[A-Z0-9]+\z/', 'required_if:tracking_delivery,gtm'],
+            'ga4_measurement_id' => ['nullable', 'string', 'max:64', 'regex:/\AG-[A-Z0-9]+\z/'],
+            'google_ads_id' => ['nullable', 'string', 'max:64', 'regex:/\AAW-[0-9]+\z/', 'required_with:google_ads_conversion_label'],
+            'google_ads_conversion_label' => ['nullable', 'string', 'max:128', 'regex:/\A[A-Za-z0-9_-]+\z/', 'required_with:google_ads_id'],
+            'meta_pixel_ids' => ['nullable', 'string', 'max:255', 'regex:/\A[0-9]+(?:\s*,\s*[0-9]+)*\z/'],
+            'tracking_delivery' => ['required', 'in:website,gtm'],
+            'enhanced_conversions_enabled' => ['nullable', 'boolean'],
             'name'         => 'required|max:150',
             'logo'         => 'nullable|image',
             'phone'        => 'required',
@@ -81,9 +86,15 @@ class SettingController extends Controller
         $setting->facebook_url = $request->facebook_url;
         $setting->twitter_url = $request->twitter_url;
         $setting->instagram_url = $request->instagram_url;
+        $setting->google_tag_manager_id = $request->input('google_tag_manager_id') ?? '';
+        foreach (['ga4_measurement_id', 'google_ads_id', 'google_ads_conversion_label', 'meta_pixel_ids', 'tracking_delivery'] as $field) {
+            $setting->$field = $request->input($field) ?? '';
+        }
+        $setting->enhanced_conversions_enabled = $request->boolean('enhanced_conversions_enabled');
         $setting->save();
 
         Cache::forget('settings_data');
+        Cache::forget('settings');
 
         session()->flash('success', 'Settings are updated.');
         return redirect()->route('admin.settings');

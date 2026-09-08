@@ -109,5 +109,16 @@
                 @endif
 
             </ul>
+            @if($user && $user->hasRole('Admin'))
+            <h6 class="main-sidebar__nav-title">System</h6>
+            <ul class="nav nav--no-borders flex-column">
+              <li class="nav-item">
+                <a class="nav-link {{ Route::is('admin.settings*') ? 'active' : '' }}" href="{{ route('admin.settings') }}">
+                  <i class="material-icons">settings</i>
+                  <span>Settings</span>
+                </a>
+              </li>
+            </ul>
+            @endif
           </div>
         </aside>

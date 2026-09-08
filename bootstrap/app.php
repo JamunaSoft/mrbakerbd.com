@@ -22,6 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->encryptCookies(except: ['mr_baker_tracking_consent']);
+        $middleware->redirectUsersTo(function (\Illuminate\Http\Request $request) {
+            return $request->user()->hasAnyRole(['Admin', 'Manager'])
+                ? route('admin.dashboard')
+                : route('home');
+        });
         $middleware->use([
             \App\Http\Middleware\SiteSettings::class,
         ]);

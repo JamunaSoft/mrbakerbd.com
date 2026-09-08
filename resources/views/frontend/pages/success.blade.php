@@ -51,29 +51,3 @@
 
 
 @endsection
-
-@section('page-scripts')
-    @if((int) ($order->payment_status ?? 0) === 1)
-        <script>
-            (function () {
-                var eventID = {{ json_encode('order-' . $order->id) }};
-                var key     = 'fb-purchase-fired-' + {{ json_encode((string) $order->id) }};
-
-                // Avoid duplicate fires on refresh/back within the same tab
-                if (sessionStorage.getItem(key)) return;
-
-                if (typeof fbq === 'function') {
-                    fbq('track', 'Purchase', {
-                        value: {{ $fbPurchase['value'] }},
-                        currency: {{ json_encode($fbPurchase['currency']) }},
-                        contents: {!! json_encode($fbPurchase['contents'], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!},
-                        content_type: {{ json_encode($fbPurchase['content_type']) }},
-                        num_items: {{ json_encode($fbPurchase['num_items']) }}
-                    }, { eventID: eventID });
-
-                    sessionStorage.setItem(key, '1');
-                }
-            })();
-        </script>
-    @endif
-@endsection

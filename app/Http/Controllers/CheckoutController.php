@@ -486,49 +486,13 @@ class CheckoutController extends Controller
     public function success($order_id)
     {
         $order = Order::with(['details.product:id,name,code'])
-            ->select('id', 'phone', 'email','payable_amount', 'total_qty', 'total_price', 'discount','shipping_charge','payment_status')
+            ->select('id', 'phone', 'email','payable_amount', 'total_qty', 'total_price', 'discount','shipping_charge','payment_status', 'payment_method', 'status')
             ->findOrFail($order_id);
 
-        // Build the contents array for FB Pixel
-        $contents = $order->details->map(function ($d) {
-            return [
-                'id'         => (string) $d->product_id,             // your catalog/product ID
-                'quantity'   => (int) ($d->qty ?? 1),
-                'item_price' => (float) ($d->price ?? 0),
-                'name'       => optional($d->product)->name ?? null, // include product name
-                'product_code' => optional($d->product)->code ?? null,
-                'size'       => $d->size ?: null,
-                'label'      => $d->label ?: null,
-                'flavour' => is_array($d->flavour) ? implode(',', $d->flavour) : ($d->flavour ?: null),
-            ];
-        })->toArray();
+        $purchaseEvent = \App\Services\MarketingEvents::purchase($order);
+        $enhancedConversionData = $purchaseEvent ? \App\Services\MarketingEvents::enhancedConversions($order) : [];
 
-        // Prefer payable_amount (includes shipping/discounts). Fallback if null.
-        $value = (float) ($order->payable_amount ?? (
-            (float) ($order->total_price ?? 0)
-            + (float) ($order->shipping_charge ?? 100)
-            - (float) ($order->discount ?? 0)
-        ));
-
-        $currency = 'BDT';
-
-        // Event metadata you’ll pass to the view
-        $fbPurchase = [
-            'value'       => $value,
-            'currency'    => $currency,
-            'contents'    => $contents,
-            'content_type'=> 'product',
-            'num_items'   => (int) ($order->total_qty ?? count($contents)),
-            'event_id'    => 'order-' . $order->id, // helps dedupe with CAPI
-        ];
-
-       // dd(json_encode($fbPurchase));
-
-
-        return view('frontend.pages.success', [
-            'order'       => $order,
-            'fbPurchase'  => $fbPurchase,
-        ]);
+        return view('frontend.pages.success', compact('order', 'purchaseEvent', 'enhancedConversionData'));
     }
 
 /*    public function submit(Request $request)
