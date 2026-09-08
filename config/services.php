@@ -40,4 +40,13 @@ return [
         'analytics_id' => env('GOOGLE_ANALYTICS_ID'),
     ],
 
+    'meta_capi' => [
+        'enabled' => env('META_CAPI_ENABLED', false),
+        'pixel_id' => env('META_CAPI_PIXEL_ID'),
+        'access_token' => env('META_CAPI_ACCESS_TOKEN'),
+        'api_version' => env('META_CAPI_API_VERSION', 'v26.0'),
+        'test_event_code' => env('META_CAPI_TEST_EVENT_CODE'),
+        'timeout' => env('META_CAPI_TIMEOUT', 5),
+    ],
+
 ];
