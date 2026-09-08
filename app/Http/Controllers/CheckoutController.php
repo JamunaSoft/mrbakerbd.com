@@ -130,6 +130,7 @@ class CheckoutController extends Controller
             'source' => 'web',
             'amount' => $total,
             'currency' => 'BDT',
+            'marketing_consent' => $request->cookie('mr_baker_tracking_consent') === 'granted',
         ]);
 
         // Save order details
