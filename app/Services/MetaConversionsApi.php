@@ -14,7 +14,7 @@ class MetaConversionsApi
 {
     public function sendPurchase(Order $order, ?Request $request = null): bool
     {
-        if (!config('services.meta_capi.enabled')) {
+        if (!config('services.meta_capi.enabled') || !$order->marketing_consent) {
             return false;
         }
 
