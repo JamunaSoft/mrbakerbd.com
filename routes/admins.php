@@ -67,7 +67,7 @@ Route::group(['middleware' => ['auth', 'role:Admin|Manager']], function () {
         Route::resource('orders', OrderController::class);
 
     // Order view route (outside permission middleware)
-    Route::get('/order/view/{order}', [OrderController::class, 'view'])->name('order.view');
+    Route::get('/order/view/{order}', [OrderController::class, 'show'])->name('order.view');
 
     Route::get('/contacts', [HomeController::class, 'contacts'])->name('contact.index');
     Route::get('/feedbacks', [HomeController::class, 'feedbacks'])->name('feedback.index');

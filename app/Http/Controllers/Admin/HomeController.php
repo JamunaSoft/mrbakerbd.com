@@ -38,7 +38,6 @@ class HomeController extends Controller
         $processing_orders = Order::query()
             ->select(['id', 'name', 'phone', 'created_at', 'delv_dt', 'address', 'notes'])
             ->where('status', 'Processing')
-            ->with(['details:id,order_id,product_id,qty'])
             ->latest('id')
             ->limit(10)
             ->get();

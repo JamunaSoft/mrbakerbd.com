@@ -118,7 +118,6 @@
                   <div class="card-body py-0" style="width: 100%; min-height: 450px;">
                     <ul class="list-group list-group-small list-group-flush">
 					           @foreach($processing_orders as $po)
-					           @foreach($po->details as $pod)
                       <li class="list-group-item d-flex row px-0">
                         <div class="col-lg-6 col-md-8 col-sm-8 col-6">
                         <h6 class="go-stats__label mb-1">
@@ -147,7 +146,6 @@
                           </div>
                         </div>
                       </li>
-					           @endforeach
 					           @endforeach
                     </ul>
                   </div>
