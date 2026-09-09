@@ -173,22 +173,28 @@
                   </div>
                   <div class="card-body p-0" style="width: 100%; min-height: 450px;">
                     <ul class="list-group list-group-small list-group-flush">
-					           @foreach($most_viewed_pro as $mvp)
+					           @forelse($most_viewed_pro as $mvp)
                       <li class="list-group-item d-flex px-3">
                         <span class="text-semibold text-fiord-blue">{{ $mvp->name }}</span>
                         <span class="ml-auto text-right text-semibold text-reagent-gray">{{ $mvp->views }}</span>
                       </li>
-					           @endforeach
+					           @empty
+                      <li class="list-group-item text-muted">No views recorded for this period.</li>
+                         @endforelse
                     </ul>
                   </div>
                   <div class="card-footer border-top">
                     <div class="row">
                       <div class="col">
-                        <select class="custom-select custom-select-sm">
-                          <option selected>This Week</option>
-                          <option>This Month</option>
-                          <option>This Year</option>
-                        </select>
+                        <form method="GET" action="{{ route('admin.dashboard') }}">
+                          <select name="most_viewed_period" aria-label="Most viewed period" class="custom-select custom-select-sm" onchange="this.form.submit()">
+                            @foreach(['week' => 'This Week', 'month' => 'This Month', 'year' => 'This Year', 'all' => 'All Time'] as $value => $label)
+                              <option value="{{ $value }}" @selected($mostViewedPeriod === $value)>{{ $label }}</option>
+                            @endforeach
+                          </select>
+                          <noscript><button type="submit" class="btn btn-primary btn-sm mt-2">Apply</button></noscript>
+                        </form>
+                        <small class="text-muted d-block mt-2">Period totals include views recorded since date tracking began.</small>
                       </div>
                     </div>
                   </div>

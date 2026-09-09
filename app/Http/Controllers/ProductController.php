@@ -17,7 +17,7 @@ class ProductController extends Controller
             ->firstOrFail();
 
         // Increment views
-        $product->increment('views');
+        app(\App\Services\ProductViewService::class)->record($product);
 
         $related_products = Product::where('status', 1)
             ->where('category_id', $product->category_id)

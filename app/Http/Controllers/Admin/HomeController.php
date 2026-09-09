@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $counts = Cache::remember('admin.dashboard.counts', 30, function () {
             return DB::table('orders')
@@ -42,12 +42,11 @@ class HomeController extends Controller
             ->latest('id')
             ->limit(10)
             ->get();
-        $most_viewed_pro = Product::query()
-            ->select(['id', 'name', 'views'])
-            ->where('views', '>', 0)
-            ->orderByDesc('views')
-            ->limit(10)
-            ->get();
+        $mostViewedPeriod = $request->query('most_viewed_period', 'week');
+        if (! in_array($mostViewedPeriod, ['week', 'month', 'year', 'all'], true)) {
+            $mostViewedPeriod = 'week';
+        }
+        $most_viewed_pro = app(\App\Services\ProductViewService::class)->mostViewed($mostViewedPeriod);
 
         $paymentCountryStats = Order::query()
             ->selectRaw("COALESCE(NULLIF(payment_country, ''), 'Unknown') as label, COUNT(*) as total")
@@ -88,7 +87,7 @@ class HomeController extends Controller
             'c_count', 'o_count', 'po_count', 'co_count', 'top_selling_pro',
             'processing_orders', 'most_viewed_pro', 'paymentCountryStats',
             'sourceStats', 'deliveryCountryStats', 'divisionStats',
-            'districtStats', 'areaStats'
+            'districtStats', 'areaStats', 'mostViewedPeriod'
         ));
     }
 
