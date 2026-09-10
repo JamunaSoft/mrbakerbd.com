@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\URL;
 use stdClass;
 use Illuminate\Support\Arr;
 use App\Services\IpCountryService;
+use App\Services\MetaConversionsApi;
 
 class CheckoutController extends Controller
 {
@@ -129,6 +130,7 @@ class CheckoutController extends Controller
             'source' => 'web',
             'amount' => $total,
             'currency' => 'BDT',
+            'marketing_consent' => $request->cookie('mr_baker_tracking_consent') === 'granted',
         ]);
 
         // Save order details
@@ -155,6 +157,7 @@ class CheckoutController extends Controller
         // For COD, send notifications and clear cart
         session()->forget('cart');
         $this->sendNotifications($order);
+        app(MetaConversionsApi::class)->sendPurchase($order, $request);
         session()->flash('msg', 'Thank you for your order. Your order has been placed successfully.');
       //  return redirect()->route('orderplaced');
         return redirect()->to(URL::temporarySignedRoute('order.success', now()->addHours(2), ['order_id' => $order->id]));
@@ -267,6 +270,7 @@ class CheckoutController extends Controller
                 'status' => 'Processing'
             ]);
             $this->sendNotifications($order);
+            app(MetaConversionsApi::class)->sendPurchase($order, $request);
             session()->forget('cart');
             session()->flash('status', 'Thank you for your payment. Your order has been successfully placed.');
 
@@ -383,6 +387,7 @@ class CheckoutController extends Controller
                 'status' => 'Processing'
             ]);
             $this->sendNotifications($order);
+            app(MetaConversionsApi::class)->sendPurchase($order);
             session()->forget('cart');
         } elseif ($request->input('status') === 'FAILED') {
             $order->update(['status' => 'Failed']);

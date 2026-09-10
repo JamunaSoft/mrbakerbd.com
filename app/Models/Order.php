@@ -30,6 +30,11 @@ class Order extends Model
         'payment_status',
         'shipping_charge',
         'status', // e.g., pending, completed, cancelled
+        'marketing_consent',
+    ];
+
+    protected $casts = [
+        'marketing_consent' => 'boolean',
     ];
 
     public function getActivitylogOptions(): LogOptions
