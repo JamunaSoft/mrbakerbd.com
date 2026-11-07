@@ -43,6 +43,13 @@ class PageController extends Controller
         ]);
     }
 
+    public function outlet(\App\Models\Outlet $outlet)
+    {
+        abort_unless($outlet->status, 404);
+
+        return view('frontend.pages.outlet', compact('outlet'));
+    }
+
     public function feedback()
     {
         return view('frontend.pages.feedback');

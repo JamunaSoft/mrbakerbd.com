@@ -29,8 +29,12 @@ Route::get('/robots.txt', function () {
 Route::get('/sitemap.xml', function () {
     $urls = collect([
         ['loc' => route('home'), 'lastmod' => now()->toAtomString(), 'changefreq' => 'daily', 'priority' => '1.0'],
+        ['loc' => route('outlets'), 'lastmod' => null, 'changefreq' => 'weekly', 'priority' => '0.7'],
         ['loc' => route('shop'), 'lastmod' => now()->toAtomString(), 'changefreq' => 'daily', 'priority' => '0.9'],
     ])
+        ->merge(\App\Models\Outlet::where('status', true)->get()->map(fn ($outlet) => [
+            'loc' => route('outlets.show', $outlet), 'lastmod' => $outlet->updated_at?->toAtomString(), 'changefreq' => 'monthly', 'priority' => '0.6',
+        ]))
         ->merge(Category::where('status', 1)->get()->map(fn ($category) => [
             'loc' => route('category', $category->slug), 'lastmod' => $category->updated_at?->toAtomString(), 'changefreq' => 'weekly', 'priority' => '0.8',
         ]))
@@ -68,6 +72,7 @@ Route::get('/order-success/{order_id}', [CheckoutController::class, 'success'])
     ->middleware('signed')
     ->name('order.success');
 
+Route::get('/outlets/{outlet}', [PageController::class, 'outlet'])->whereNumber('outlet')->name('outlets.show');
 Route::get('/outlets', [PageController::class, 'outlets'])->name('outlets');
 Route::get('/feedback', [PageController::class, 'feedback'])->name('feedback');
 Route::post('/feedback/submit', [HomeController::class, 'feedbackSubmit'])->name('feedback.submit');
