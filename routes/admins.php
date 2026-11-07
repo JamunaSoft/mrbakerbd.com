@@ -36,6 +36,8 @@ Route::group(['middleware' => ['auth', 'role:Admin|Manager']], function () {
         // User routes
         Route::resource('users', UserController::class);
 
+        Route::resource('outlets', \App\Http\Controllers\Admin\OutletController::class)->except('show');
+
         // Page routes
         Route::resource('pages', PageController::class);
 

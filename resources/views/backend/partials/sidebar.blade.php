@@ -34,6 +34,13 @@
             </ul>
             <h6 class="main-sidebar__nav-title">Management</h6>
             <ul class="nav nav--no-borders flex-column">
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.outlets.*') ? 'active' : '' }}" href="{{ route('admin.outlets.index') }}">
+                        <i class="material-icons">store</i><span>Outlets</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav nav--no-borders flex-column">
 
                 @php
                     $user = auth()->user();

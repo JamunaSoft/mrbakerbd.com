@@ -38,7 +38,9 @@ class PageController extends Controller
 
     public function outlets()
     {
-        return view('frontend.pages.outlets');
+        return view('frontend.pages.outlets', [
+            'outlets' => \App\Models\Outlet::where('status', true)->orderBy('sort_order')->orderBy('id')->get(),
+        ]);
     }
 
     public function feedback()

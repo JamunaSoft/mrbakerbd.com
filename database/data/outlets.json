@@ -1,0 +1,219 @@
+[
+  {
+    "name": "Joshimuddin",
+    "address": "Sector-3, Road-2, H-6, Joshimuddin Road, Uttara.",
+    "phone": "01955-578845",
+    "status": true,
+    "sort_order": 0
+  },
+  {
+    "name": "House Building",
+    "address": "House: 18, Plot-18 Sonargaon Avenue Sector-9, Uttara, Dhaka.",
+    "phone": "01955-578802",
+    "status": true,
+    "sort_order": 1
+  },
+  {
+    "name": "Ajompur",
+    "address": "House-20, Sector-7, Rabindro Sorani, Uttara, Dhaka-1230.",
+    "phone": "01955-578838",
+    "status": true,
+    "sort_order": 2
+  },
+  {
+    "name": "Boshundhara",
+    "address": "Kazi Abdul Ltif Mansion, House: 86 KA-9/A Jagannathpur Badda, Dhaka.",
+    "phone": "01955-578806",
+    "status": true,
+    "sort_order": 3
+  },
+  {
+    "name": "100 Feet",
+    "address": "Syed Nagar, RS Aria, House 15/19/5, 100 Feet Madani Avenue, Syed Nagar Vatara.",
+    "phone": "01955-578834",
+    "status": false,
+    "sort_order": 4
+  },
+  {
+    "name": "Gulshan -1",
+    "address": "42 Gulshan Avenue Jabbar Tower, Gulshan -1.",
+    "phone": "01955-578803",
+    "status": true,
+    "sort_order": 5
+  },
+  {
+    "name": "D.C.C",
+    "address": "Shop No-G23, DCC, North Super Market, Gulshan -2.",
+    "phone": "01955-578804",
+    "status": true,
+    "sort_order": 6
+  },
+  {
+    "name": "Banani",
+    "address": "46, Kamal Ataturk Avenue, Banani, Dhaka.",
+    "phone": "01955-578805",
+    "status": true,
+    "sort_order": 7
+  },
+  {
+    "name": "Bonosree",
+    "address": "House-15, Road-5, Block-C, Bonosree Project, Dhaka.",
+    "phone": "01955-578807",
+    "status": true,
+    "sort_order": 8
+  },
+  {
+    "name": "Meradia",
+    "address": "Meradia, Plot#L/1/1 & L/2, Road #09, Block#L, Main Road, South Bonosree, Khilgaon, Dhaka-1229.",
+    "phone": "01955-578809",
+    "status": true,
+    "sort_order": 9
+  },
+  {
+    "name": "Khilgaon",
+    "address": "567/A, Block-C, Khilgaon, Taltola, Dhaka.",
+    "phone": "01955-578810",
+    "status": true,
+    "sort_order": 10
+  },
+  {
+    "name": "Pollobi",
+    "address": "Plot-40, Block-B, Road-3, Sector-12, Mirpur, Dhaka.",
+    "phone": "01955-578820",
+    "status": true,
+    "sort_order": 11
+  },
+  {
+    "name": "Kafrul",
+    "address": "28/A, North Kafrul, Dhaka Cantonment-1206.",
+    "phone": "01955-578836",
+    "status": true,
+    "sort_order": 12
+  },
+  {
+    "name": "Shewrapara",
+    "address": "East Shewrapara, Mirpur 847, Lima Complex, Metro Pilar: 317, Dhaka-1216.",
+    "phone": "01955-578819",
+    "status": true,
+    "sort_order": 13
+  },
+  {
+    "name": "Mirpur 1",
+    "address": "10 No, Darus Salam Road South Bishi, Mirpur-1, Dhaka-1216.",
+    "phone": "01955-578821",
+    "status": true,
+    "sort_order": 14
+  },
+  {
+    "name": "Mirpur 10",
+    "address": "Upoma Plaza, Sec#6, Block#A, Road#4, House#2/A, Dhaka-1216.",
+    "phone": "01955-578842",
+    "status": true,
+    "sort_order": 15
+  },
+  {
+    "name": "Senpara",
+    "address": "142/1, Begum Rokeya Soroni, Senpara Parbota.",
+    "phone": "01955-578843",
+    "status": true,
+    "sort_order": 16
+  },
+  {
+    "name": "Shadhin Market",
+    "address": "Shadhin Market, Mirpur Sony Square Opposite.",
+    "phone": "01955-578823",
+    "status": true,
+    "sort_order": 17
+  },
+  {
+    "name": "Ring Road",
+    "address": "Krishi Market Mosque Complex Shop-02, Mohammadpur, Dhaka.",
+    "phone": "01955-578818",
+    "status": true,
+    "sort_order": 18
+  },
+  {
+    "name": "Tajmohol Road",
+    "address": "22/12 Block-C, Tajmohol Road, Mohammadpur, Dhaka-1207.",
+    "phone": "01955-578817",
+    "status": true,
+    "sort_order": 19
+  },
+  {
+    "name": "Mohammadia Housing",
+    "address": "Road#03, House#21, Mohammadia Housing Society, Mohammadpur, Dhaka.",
+    "phone": "01955-578847",
+    "status": true,
+    "sort_order": 20
+  },
+  {
+    "name": "Dhanmondi",
+    "address": "Emperial Amin Ahmed Center, House#54, Road#10/A, Dhanmondi, Dhaka-1209.",
+    "phone": "01955-578816",
+    "status": true,
+    "sort_order": 21
+  },
+  {
+    "name": "Panthopath",
+    "address": "20/3, Sundhoram Plaza, West Panthopath, Dhaka-1205.",
+    "phone": "01955-578850",
+    "status": true,
+    "sort_order": 22
+  },
+  {
+    "name": "Lalbag",
+    "address": "03 No Dhakessori Road, Lalbag, Dhaka-1211.",
+    "phone": "01955-578839",
+    "status": true,
+    "sort_order": 23
+  },
+  {
+    "name": "Elephent Road",
+    "address": "65 New Elephent Road.",
+    "phone": "01955-578841",
+    "status": true,
+    "sort_order": 24
+  },
+  {
+    "name": "Laxmibazar",
+    "address": "24, Shuvash Bosh Avenue, Luxmibazar, Dhaka-1100.",
+    "phone": "01955-578812",
+    "status": true,
+    "sort_order": 25
+  },
+  {
+    "name": "Wari",
+    "address": "11, Ranking Street, Wari, Dhaka.",
+    "phone": "01955-578811",
+    "status": true,
+    "sort_order": 26
+  },
+  {
+    "name": "Baily Road",
+    "address": "137 New Baily Road, Dhaka.",
+    "phone": "01955-578808",
+    "status": true,
+    "sort_order": 27
+  },
+  {
+    "name": "Keranigonj",
+    "address": "Samanti Tower, 2nd Floor, Kadamtoli Aganogar, South Keraniganj, Dhaka-1310.",
+    "phone": "01955-578833",
+    "status": true,
+    "sort_order": 28
+  },
+  {
+    "name": "Savar",
+    "address": "House#3, Shop#244, 1st Floor, Savar, Dhaka-1340.",
+    "phone": "01955-578835",
+    "status": true,
+    "sort_order": 29
+  },
+  {
+    "name": "Targas",
+    "address": "Plot-2/1, Shape No 1, Kunia Pasor Tagas, Ward No-37, Gazipur.",
+    "phone": "01955-578851",
+    "status": true,
+    "sort_order": 30
+  }
+]
